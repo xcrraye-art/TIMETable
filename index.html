@@ -6,45 +6,33 @@
     <title>我的课表</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body data-theme="dark">
     <header class="topbar">
       <div>
         <h1>我的课表</h1>
-        <p class="sub">点右边 ➕ 添加课程/日程（保存在本机浏览器）</p>
+        <p class="sub">➕ 添加课程/日程（保存在本机浏览器）｜点击课程可删除</p>
+        <p class="ver" id="ver"></p>
       </div>
 
       <div class="actions-top">
+        <button id="themeBtn" class="btn" type="button">切换主题</button>
         <button id="clearAllBtn" class="btn danger" type="button">🗑 清除全部</button>
         <button id="addBtn" class="btn primary" type="button">➕ 添加</button>
       </div>
     </header>
 
     <main class="wrap">
-      <section class="grid" aria-label="课表网格">
-        <div class="cell head"></div>
-        <div class="cell head">周一</div>
-        <div class="cell head">周二</div>
-        <div class="cell head">周三</div>
-        <div class="cell head">周四</div>
-        <div class="cell head">周五</div>
-        <div class="cell head">周六</div>
-        <div class="cell head">周日</div>
-      </section>
-
-      <section class="legend">
-        <span class="dot"></span>
-        点击课程可删除（防误删会二次确认）
-      </section>
+      <section id="grid" class="grid" aria-label="课表网格"></section>
+      <section class="hint">提示：课程块会按开始/结束时间自动跨行；Lunch 默认显示在 13:00–14:00（周一到周五）。</section>
     </main>
 
-    <!-- 弹窗 -->
     <dialog id="dialog" class="dialog">
       <form id="form" class="form">
         <h2>添加课程 / 日程</h2>
 
         <label>
-          标题（课程名/日程）
-          <input name="title" required placeholder="例如：IHRM Lecture" />
+          标题
+          <input name="title" required placeholder="例如：BX3152 Lecture" />
         </label>
 
         <div class="row">
@@ -62,19 +50,19 @@
           </label>
 
           <label>
-            开始时间
-            <input name="start" type="time" required value="09:00" />
+            开始
+            <input name="start" type="time" required value="09:00" step="1800" />
           </label>
 
           <label>
-            结束时间
-            <input name="end" type="time" required value="10:00" />
+            结束
+            <input name="end" type="time" required value="10:00" step="1800" />
           </label>
         </div>
 
         <label>
           地点（可选）
-          <input name="location" placeholder="例如：LT3 / Online" />
+          <input name="location" placeholder="例如：C4-14 / Online" />
         </label>
 
         <label>
