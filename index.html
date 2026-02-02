@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>可编辑课表</title>
+    <title>我的课表</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,7 +12,11 @@
         <h1>我的课表</h1>
         <p class="sub">点右边 ➕ 添加课程/日程（保存在本机浏览器）</p>
       </div>
-      <button id="addBtn" class="btn primary" type="button">➕ 添加</button>
+
+      <div class="actions-top">
+        <button id="clearAllBtn" class="btn danger" type="button">🗑 清除全部</button>
+        <button id="addBtn" class="btn primary" type="button">➕ 添加</button>
+      </div>
     </header>
 
     <main class="wrap">
@@ -25,13 +29,11 @@
         <div class="cell head">周五</div>
         <div class="cell head">周六</div>
         <div class="cell head">周日</div>
-
-        <!-- 时间行：你可以改成自己的时间段 -->
-        <template id="timeRowTemplate"></template>
       </section>
 
       <section class="legend">
-        <span class="dot"></span> 点击课程可删除（防误删会二次确认）
+        <span class="dot"></span>
+        点击课程可删除（防误删会二次确认）
       </section>
     </main>
 
@@ -90,4 +92,3 @@
     <script src="app.js"></script>
   </body>
 </html>
-
