@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Timetable</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__header">
+        <h1>Weekly Timetable</h1>
+        <p>Create a clean schedule layout for your classes and study sessions.</p>
+      </header>
+
+      <section class="timetable" aria-label="Class schedule">
+        <div class="timetable__grid">
+          <div class="timetable__cell timetable__cell--corner"></div>
+          <div class="timetable__cell timetable__cell--day">Mon</div>
+          <div class="timetable__cell timetable__cell--day">Tues</div>
+          <div class="timetable__cell timetable__cell--day">Wed</div>
+          <div class="timetable__cell timetable__cell--day">Thu</div>
+          <div class="timetable__cell timetable__cell--day">Fri</div>
+
+          <div class="timetable__time">9:00 - 10:00</div>
+          <div class="timetable__time">10:00 - 11:00</div>
+          <div class="timetable__time">11:00 - 12:00</div>
+          <div class="timetable__time">12:00 - 1:00</div>
+          <div class="timetable__time">1:00 - 2:00</div>
+          <div class="timetable__time">2:00 - 3:00</div>
+          <div class="timetable__time">3:00 - 4:00</div>
+
+          <article class="timetable__event" style="--day: 1; --start: 1; --span: 2;">
+            <h3>Lecture A</h3>
+            <p>BX3152 (C4-14)</p>
+            <span>09:00 - 11:00</span>
+          </article>
+
+          <article class="timetable__event" style="--day: 3; --start: 1; --span: 2;">
+            <h3>Lecture A</h3>
+            <p>BX2051 (C4-14)</p>
+            <span>09:00 - 11:00</span>
+          </article>
+
+          <article class="timetable__event" style="--day: 5; --start: 1; --span: 2;">
+            <h3>Tutorial F</h3>
+            <p>BX2051 (E2-02)</p>
+            <span>09:00 - 11:00</span>
+          </article>
+
+          <article class="timetable__event" style="--day: 4; --start: 2; --span: 1;">
+            <h3>Lecture B</h3>
+            <p>BU1112 Online Class</p>
+            <span>10:00 - 11:00</span>
+          </article>
+
+          <article class="timetable__event" style="--day: 2; --start: 3; --span: 2;">
+            <h3>Tutorial B</h3>
+            <p>BU1109 (C1-07)</p>
+            <span>11:00 - 13:00</span>
+          </article>
+
+          <article class="timetable__event" style="--day: 3; --start: 3; --span: 2;">
+            <h3>Tutorial D</h3>
+            <p>BX3152 (B3-07)</p>
+            <span>11:00 - 13:00</span>
+          </article>
+
+          <article class="timetable__event" style="--day: 5; --start: 3; --span: 2;">
+            <h3>Tutorial E</h3>
+            <p>BU1112 (B3-07)</p>
+            <span>11:00 - 13:00</span>
+          </article>
+
+          <article class="timetable__event timetable__event--highlight" style="--day: 2; --start: 5; --span: 1; --span-days: 4;">
+            <h3>Lunch</h3>
+            <p>Take a break and recharge.</p>
+          </article>
+
+          <article class="timetable__event" style="--day: 1; --start: 5; --span: 2;">
+            <h3>Tutorial A</h3>
+            <p>BU1109 (C4-14)</p>
+            <span>13:00 - 15:00</span>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
