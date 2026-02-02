@@ -6,10 +6,11 @@
   --muted: #a8b0c3;
   --line: rgba(255, 255, 255, 0.08);
   --accent: #6aa6ff;
-  --danger: #ff6a6a;
+  --danger: #ff5a5a;
 }
 
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
@@ -38,6 +39,8 @@ h1 { margin: 0; font-size: 20px; }
 
 .wrap { max-width: 1100px; margin: 18px auto; padding: 0 14px 28px; }
 
+.actions-top { display: flex; gap: 10px; }
+
 .btn {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.04);
@@ -48,11 +51,18 @@ h1 { margin: 0; font-size: 20px; }
   font-size: 14px;
 }
 .btn:hover { background: rgba(255, 255, 255, 0.07); }
+
 .btn.primary {
   border-color: rgba(106, 166, 255, 0.5);
   background: rgba(106, 166, 255, 0.18);
 }
 .btn.primary:hover { background: rgba(106, 166, 255, 0.26); }
+
+.btn.danger {
+  border-color: rgba(255, 90, 90, 0.6);
+  background: rgba(255, 90, 90, 0.18);
+}
+.btn.danger:hover { background: rgba(255, 90, 90, 0.28); }
 
 .grid {
   display: grid;
@@ -79,8 +89,8 @@ h1 { margin: 0; font-size: 20px; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text);
 }
+
 .cell.time {
   background: rgba(15, 23, 42, 0.5);
   color: var(--muted);
@@ -88,20 +98,26 @@ h1 { margin: 0; font-size: 20px; }
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: pre-line;
 }
 
+/* ✅ 课程块：实色不透明，盖住网格线 */
 .event {
   position: absolute;
   left: 8px;
   right: 8px;
   top: 8px;
+
   border-radius: 12px;
   padding: 10px 10px;
-  border: 1px solid rgba(106, 166, 255, 0.35);
-  background: rgba(106, 166, 255, 0.14);
   cursor: pointer;
+
+  background: #16223a; /* 不透明 */
+  border: 1px solid rgba(106,166,255,0.6);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  z-index: 2; /* 压在网格线之上 */
 }
-.event:hover { background: rgba(106, 166, 255, 0.22); }
+.event:hover { filter: brightness(1.05); }
 
 .event .title { font-weight: 650; font-size: 14px; }
 .event .meta { margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.35; }
@@ -144,15 +160,6 @@ input, select, textarea {
 }
 textarea { resize: vertical; }
 
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-}
+.row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 6px;
-}
+.actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
