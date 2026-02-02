@@ -1,89 +1,93 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weekly Timetable</title>
+    <title>可编辑课表</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="page">
-      <header class="page__header">
-        <h1>Weekly Timetable</h1>
-        <p>Create a clean schedule layout for your classes and study sessions.</p>
-      </header>
+    <header class="topbar">
+      <div>
+        <h1>我的课表</h1>
+        <p class="sub">点右边 ➕ 添加课程/日程（保存在本机浏览器）</p>
+      </div>
+      <button id="addBtn" class="btn primary" type="button">➕ 添加</button>
+    </header>
 
-      <section class="timetable" aria-label="Class schedule">
-        <div class="timetable__grid">
-          <div class="timetable__cell timetable__cell--corner"></div>
-          <div class="timetable__cell timetable__cell--day">Mon</div>
-          <div class="timetable__cell timetable__cell--day">Tues</div>
-          <div class="timetable__cell timetable__cell--day">Wed</div>
-          <div class="timetable__cell timetable__cell--day">Thu</div>
-          <div class="timetable__cell timetable__cell--day">Fri</div>
+    <main class="wrap">
+      <section class="grid" aria-label="课表网格">
+        <div class="cell head"></div>
+        <div class="cell head">周一</div>
+        <div class="cell head">周二</div>
+        <div class="cell head">周三</div>
+        <div class="cell head">周四</div>
+        <div class="cell head">周五</div>
+        <div class="cell head">周六</div>
+        <div class="cell head">周日</div>
 
-          <div class="timetable__time">9:00 - 10:00</div>
-          <div class="timetable__time">10:00 - 11:00</div>
-          <div class="timetable__time">11:00 - 12:00</div>
-          <div class="timetable__time">12:00 - 1:00</div>
-          <div class="timetable__time">1:00 - 2:00</div>
-          <div class="timetable__time">2:00 - 3:00</div>
-          <div class="timetable__time">3:00 - 4:00</div>
+        <!-- 时间行：你可以改成自己的时间段 -->
+        <template id="timeRowTemplate"></template>
+      </section>
 
-          <article class="timetable__event" style="--day: 1; --start: 1; --span: 2;">
-            <h3>Lecture A</h3>
-            <p>BX3152 (C4-14)</p>
-            <span>09:00 - 11:00</span>
-          </article>
-
-          <article class="timetable__event" style="--day: 3; --start: 1; --span: 2;">
-            <h3>Lecture A</h3>
-            <p>BX2051 (C4-14)</p>
-            <span>09:00 - 11:00</span>
-          </article>
-
-          <article class="timetable__event" style="--day: 5; --start: 1; --span: 2;">
-            <h3>Tutorial F</h3>
-            <p>BX2051 (E2-02)</p>
-            <span>09:00 - 11:00</span>
-          </article>
-
-          <article class="timetable__event" style="--day: 4; --start: 2; --span: 1;">
-            <h3>Lecture B</h3>
-            <p>BU1112 Online Class</p>
-            <span>10:00 - 11:00</span>
-          </article>
-
-          <article class="timetable__event" style="--day: 2; --start: 3; --span: 2;">
-            <h3>Tutorial B</h3>
-            <p>BU1109 (C1-07)</p>
-            <span>11:00 - 13:00</span>
-          </article>
-
-          <article class="timetable__event" style="--day: 3; --start: 3; --span: 2;">
-            <h3>Tutorial D</h3>
-            <p>BX3152 (B3-07)</p>
-            <span>11:00 - 13:00</span>
-          </article>
-
-          <article class="timetable__event" style="--day: 5; --start: 3; --span: 2;">
-            <h3>Tutorial E</h3>
-            <p>BU1112 (B3-07)</p>
-            <span>11:00 - 13:00</span>
-          </article>
-
-          <article class="timetable__event timetable__event--highlight" style="--day: 2; --start: 5; --span: 1; --span-days: 4;">
-            <h3>Lunch</h3>
-            <p>Take a break and recharge.</p>
-          </article>
-
-          <article class="timetable__event" style="--day: 1; --start: 5; --span: 2;">
-            <h3>Tutorial A</h3>
-            <p>BU1109 (C4-14)</p>
-            <span>13:00 - 15:00</span>
-          </article>
-        </div>
+      <section class="legend">
+        <span class="dot"></span> 点击课程可删除（防误删会二次确认）
       </section>
     </main>
+
+    <!-- 弹窗 -->
+    <dialog id="dialog" class="dialog">
+      <form id="form" class="form" method="dialog">
+        <h2>添加课程 / 日程</h2>
+
+        <label>
+          标题（课程名/日程）
+          <input name="title" required placeholder="例如：IHRM Lecture" />
+        </label>
+
+        <div class="row">
+          <label>
+            星期
+            <select name="day" required>
+              <option value="1">周一</option>
+              <option value="2">周二</option>
+              <option value="3">周三</option>
+              <option value="4">周四</option>
+              <option value="5">周五</option>
+              <option value="6">周六</option>
+              <option value="7">周日</option>
+            </select>
+          </label>
+
+          <label>
+            开始时间
+            <input name="start" type="time" required value="09:00" />
+          </label>
+
+          <label>
+            结束时间
+            <input name="end" type="time" required value="10:00" />
+          </label>
+        </div>
+
+        <label>
+          地点（可选）
+          <input name="location" placeholder="例如：LT3 / Online" />
+        </label>
+
+        <label>
+          备注（可选）
+          <textarea name="note" rows="3" placeholder="例如：带电脑 / 小测"></textarea>
+        </label>
+
+        <div class="actions">
+          <button class="btn" type="button" id="cancelBtn">取消</button>
+          <button class="btn primary" type="submit">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
   </body>
 </html>
+
