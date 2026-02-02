@@ -1,32 +1,37 @@
-// 可编辑课表（本地存储版）
-// 数据保存在浏览器 localStorage：同一台设备同一浏览器会记住
+// ===== 可编辑课表（稳定修复版）=====
+// - 支持整点 / 半点
+// - 不要求时间完全匹配格子
+// - 课程一定能显示在表格里
+// - 数据保存在 localStorage
 
 const STORAGE_KEY = "timetable_events_v1";
 
-// 课表时间段（你可以改）
+// ===== 时间刻度：08:00 - 22:00，每 1 小时一格 =====
 const TIME_SLOTS = [
-  "08:00", "09:00", "10:00", "11:00",
-  "12:00", "13:00", "14:00", "15:00",
-  "16:00", "17:00", "18:00", "19:00",
-  "20:00", "21:00"
+  "08:00","09:00","10:00","11:00","12:00",
+  "13:00","14:00","15:00","16:00","17:00",
+  "18:00","19:00","20:00","21:00","22:00"
 ];
 
+// ===== 工具函数 =====
 const grid = document.querySelector(".grid");
 const dialog = document.getElementById("dialog");
 const form = document.getElementById("form");
 const addBtn = document.getElementById("addBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 
-function pad2(n) { return String(n).padStart(2, "0"); }
 function timeToMinutes(t) {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
 }
 
+function uid() {
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+
 function loadEvents() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
   } catch {
     return [];
   }
@@ -36,13 +41,9 @@ function saveEvents(events) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
 }
 
-function uid() {
-  return Math.random().toString(16).slice(2) + Date.now().toString(16);
-}
-
-// 渲染网格（表头已在 HTML 里，下面生成时间行）
-function buildGridBody() {
-  // 移除旧的时间行（保留前 8 个表头格子）
+// ===== 构建课表网格 =====
+function buildGrid() {
+  // 清掉旧格子（保留表头 8 个）
   while (grid.children.length > 8) grid.removeChild(grid.lastChild);
 
   for (let i = 0; i < TIME_SLOTS.length - 1; i++) {
@@ -55,117 +56,97 @@ function buildGridBody() {
     timeCell.textContent = `${start}–${end}`;
     grid.appendChild(timeCell);
 
-    // 7 天格子
+    // 周一到周日
     for (let day = 1; day <= 7; day++) {
       const cell = document.createElement("div");
       cell.className = "cell";
-      cell.dataset.day = String(day);
-      cell.dataset.slotStart = start;
-      cell.dataset.slotEnd = end;
+      cell.dataset.day = day;
+      cell.dataset.start = start;
+      cell.dataset.end = end;
       grid.appendChild(cell);
     }
   }
 }
 
-function clearEventsFromCells() {
-  document.querySelectorAll(".event").forEach((el) => el.remove());
+// ===== 清空课程块 =====
+function clearEvents() {
+  document.querySelectorAll(".event").forEach(e => e.remove());
 }
 
+// ===== 渲染课程（关键修复点）=====
 function renderEvents(events) {
-  clearEventsFromCells();
+  clearEvents();
 
-  // 这里做一个“按开始时间落格子”的简单渲染：
-  // 每个事件显示在它开始时间所在的那个 slot 的格子里
-  for (const ev of events) {
-    const selector = `.cell[data-day="${ev.day}"][data-slotStart="${ev.start}"]`;
-    const cell = document.querySelector(selector);
-    if (!cell) continue;
+  events.forEach(ev => {
+    const startMin = timeToMinutes(ev.start);
+
+    const cells = document.querySelectorAll(`.cell[data-day="${ev.day}"]`);
+    let targetCell = null;
+
+    for (const cell of cells) {
+      const a = timeToMinutes(cell.dataset.start);
+      const b = timeToMinutes(cell.dataset.end);
+      if (startMin >= a && startMin < b) {
+        targetCell = cell;
+        break;
+      }
+    }
+
+    if (!targetCell) return;
 
     const box = document.createElement("div");
     box.className = "event";
-    box.dataset.id = ev.id;
 
-    const title = document.createElement("div");
-    title.className = "title";
-    title.textContent = ev.title;
+    box.innerHTML = `
+      <div class="title">${ev.title}</div>
+      <div class="meta">
+        ${ev.start}–${ev.end}
+        ${ev.location ? `<br>📍 ${ev.location}` : ""}
+        ${ev.note ? `<br>📝 ${ev.note}` : ""}
+      </div>
+    `;
 
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    const loc = ev.location ? `📍 ${ev.location}` : "";
-    const note = ev.note ? `📝 ${ev.note}` : "";
-    meta.innerHTML = `${ev.start}–${ev.end}${loc ? "<br>" + loc : ""}${note ? "<br>" + note : ""}`;
+    box.onclick = () => {
+      if (confirm(`删除课程？\n\n${ev.title}`)) {
+        const next = loadEvents().filter(x => x.id !== ev.id);
+        saveEvents(next);
+        renderEvents(next);
+      }
+    };
 
-    box.appendChild(title);
-    box.appendChild(meta);
-
-    // 点击删除（带确认）
-    box.addEventListener("click", () => {
-      const ok = confirm(`删除这个日程？\n\n${ev.title} (${ev.start}–${ev.end})`);
-      if (!ok) return;
-      const next = loadEvents().filter((x) => x.id !== ev.id);
-      saveEvents(next);
-      renderEvents(next);
-    });
-
-    cell.appendChild(box);
-  }
+    targetCell.appendChild(box);
+  });
 }
 
-function openDialog() {
-  form.reset();
-  // 给默认值更友好
-  form.day.value = "1";
-  form.start.value = "09:00";
-  form.end.value = "10:00";
+// ===== 弹窗控制 =====
+addBtn.onclick = () => dialog.showModal();
+cancelBtn.onclick = () => dialog.close();
 
-  if (typeof dialog.showModal === "function") dialog.showModal();
-  else dialog.setAttribute("open", "open"); // 极少数旧浏览器 fallback
-}
-
-function closeDialog() {
-  if (typeof dialog.close === "function") dialog.close();
-  else dialog.removeAttribute("open");
-}
-
-addBtn.addEventListener("click", openDialog);
-cancelBtn.addEventListener("click", closeDialog);
-
-form.addEventListener("submit", (e) => {
+form.onsubmit = e => {
   e.preventDefault();
-
   const data = Object.fromEntries(new FormData(form).entries());
-  const startMin = timeToMinutes(data.start);
-  const endMin = timeToMinutes(data.end);
 
-  if (endMin <= startMin) {
-    alert("结束时间必须晚于开始时间。");
+  if (timeToMinutes(data.end) <= timeToMinutes(data.start)) {
+    alert("结束时间必须晚于开始时间");
     return;
   }
 
-  // 限制：必须是我们时间段里存在的 start（简单版）
-  if (!TIME_SLOTS.includes(data.start)) {
-    alert("开始时间请选整点，并且在课表时间段里（可在 app.js 的 TIME_SLOTS 修改）。");
-    return;
-  }
-
-  const ev = {
+  const events = loadEvents();
+  events.push({
     id: uid(),
     title: data.title.trim(),
     day: Number(data.day),
     start: data.start,
     end: data.end,
-    location: (data.location || "").trim(),
-    note: (data.note || "").trim(),
-  };
+    location: data.location?.trim(),
+    note: data.note?.trim()
+  });
 
-  const events = loadEvents();
-  events.push(ev);
   saveEvents(events);
-
-  closeDialog();
+  dialog.close();
   renderEvents(events);
-});
+};
 
-// 初始化
-buildGridBody();
+// ===== 初始化 =====
+buildGrid();
 renderEvents(loadEvents());
